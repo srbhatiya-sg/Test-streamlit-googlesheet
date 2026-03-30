@@ -1,19 +1,22 @@
 import streamlit as st
-import json
-from oauth2client.service_account import ServiceAccountCredentials
 import gspread
+from google.oauth2.service_account import Credentials
+import json
 
-st.title("Google Sheets Connection Test")
+st.title("Google Sheets Connection Test (Updated)")
 
-# -----------------------------
-# AUTHENTICATE WITH STREAMLIT SECRET
-# -----------------------------
 try:
-    scope = ["https://spreadsheets.google.com/feeds",
-             "https://www.googleapis.com/auth/drive"]
-
+    # Load credentials from Streamlit Secrets
     creds_dict = json.loads(st.secrets["google_creds"]["creds"])
-    creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
+
+    # Define scopes
+    scopes = ["https://www.googleapis.com/auth/spreadsheets",
+              "https://www.googleapis.com/auth/drive"]
+
+    # Create Credentials object
+    creds = Credentials.from_service_account_info(creds_dict, scopes=scopes)
+
+    # Authorize gspread client
     client = gspread.authorize(creds)
 
     st.success("✅ Authentication successful!")
